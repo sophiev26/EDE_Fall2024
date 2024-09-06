@@ -23,14 +23,17 @@ Enter answers to the questions just below the >Answer: prompt.
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
 > Answer: 
+I don't have a lot of previous experience with data analytics and zero experience with R and Git. In my undergrad, I took an introductory statistics class (without R) where we did some basic data analysis. Additionally, I took several chemistry classes and a physics class where we collected data in wet labs and did some analysis afterward. I also took GIS last semester where we took data from several sources (such as USGS) and analyzed it using ArcGIS software.
 
 2. Are there any components of the course about which you feel confident?
 
 > Answer: 
+I am generally pretty good with numbers. Historically, I've caught on pretty quickly with data analysis tools like Excel and ArcGIS. I'm hopeful that I'll be able to follow along. 
 
 3. Are there any components of the course about which you feel apprehensive?
 
 > Answer: 
+On the other hand, I am not very good with computer terminology. I'm a bit worried that I won't understand a lot of the terms and concepts required to fully grasp the goals of the course. I am also worried that the actual coding itself will be a bit rough for me to get the hang of, especially with the specificity of lines of code (like messing it all up if you just forget a space or a dash). However, I'm pretty good at recognizing when I need help and asking for it!
 
 
 ## 2) GitHub
