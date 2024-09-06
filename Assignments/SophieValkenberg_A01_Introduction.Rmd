@@ -41,6 +41,7 @@ On the other hand, I am not very good with computer terminology. I'm a bit worri
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository and that you have updated your course README file, committed those changes, and pushed them to your GitHub account. 
 
 > Answer: 
+https://github.com/sophiev26/EDE_Fall2024
 
 ## 3) Knitting
 When you have completed this document, click the `knit` button.This should produce a PDF copy of your markdown document. Submit this PDF to Canvas 
