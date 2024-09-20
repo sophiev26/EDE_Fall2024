@@ -101,7 +101,7 @@ Remember formatting of dates in R:
 # An example is provided to get you started.
 # (code must be uncommented)
 today <- Sys.Date()
-format(today, format = "%B")
+format(today, format = "%m/%d/%y")
 #format(today, format = "")
 #format(today, format = "")
 #format(today, format = "")
@@ -132,9 +132,9 @@ date_obj_today
 
 #Ex_3 - on your own...
 str_juneteenth <- "19 June 1865"
-#Since the format is month-day-year we will use function mdy()
-#date_juneteenth <- ()
-#date_juneteenth
+#Since the format is month-day-year we will use function dmy()
+date_juneteenth <- dmy(str_juneteenth)
+date_juneteenth
 ```
 ### The century issue
 
@@ -147,6 +147,8 @@ date_obj_past <- ymd(str_past)
 date_obj_past
 
 #Build a function to fix year that is more general than the one discussed in the lesson
+d <- ymd("55-feb-3")
+cutoff <- 24
 fix.early.dates <- function(d, cutoff) {
   
        m <- year(d) %% 100  
@@ -171,7 +173,7 @@ fixed_date_obj_past
 #Fix for century issue
 str_past <- "55-feb-3"
 
-#Alternative 1
+#Alternative 1: adding an L allows it to store a long integer :p 
 date_obj_past <- fast_strptime(str_past,"%y-%b-%d",cutoff_2000=24L)
 date_obj_past
 
