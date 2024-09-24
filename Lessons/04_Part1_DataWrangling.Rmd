@@ -29,10 +29,10 @@ library(tidyverse)
 library(lubridate)
 NTL.phys.data <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
 
-colnames(NTL.phys.data)
-head(NTL.phys.data)
-summary(NTL.phys.data)
-str(NTL.phys.data)
+colnames(NTL.phys.data) #names of the columns
+head(NTL.phys.data) #first 6 observations gives a summary for each column
+summary(NTL.phys.data) #full summary of all of the data
+str(NTL.phys.data) #data types for each column
 dim(NTL.phys.data)
 
 class(NTL.phys.data$sampledate)
@@ -56,6 +56,7 @@ What is the best way to wrangle data? There are multiple ways to arrive at a spe
 
 ```{r, results = "hide"}
 vignette("dplyr")
+#Brings up an introduction/information page for this package
 ```
 
 ### Filter
@@ -78,6 +79,7 @@ class(NTL.phys.data$depth)
 
 # matrix filtering
 NTL.phys.data.surface1 <- NTL.phys.data[NTL.phys.data$depth == 0,]
+#Filtering the rows that have 0 on column depth
 
 # dplyr filtering
 NTL.phys.data.surface2 <- filter(NTL.phys.data, depth == 0)
@@ -94,11 +96,14 @@ dim(NTL.phys.data.surface3)
 # Choose multiple conditions to filter
 summary(NTL.phys.data$lakename)
 NTL.phys.data.PeterPaul1 <- filter(NTL.phys.data, lakename == "Paul Lake" | lakename == "Peter Lake")
+#To select only paul lake and peter lake the | is either/or
 NTL.phys.data.PeterPaul2 <- filter(NTL.phys.data, lakename != "Central Long Lake" & 
                                      lakename != "Crampton Lake" & lakename != "East Long Lake" &
                                      lakename != "Hummingbird Lake" & lakename != "Tuesday Lake" &
                                      lakename != "Ward Lake" & lakename != "West Long Lake")
+#Here, we're selecting by exclusion by excluding the other lakes we're not interested in
 NTL.phys.data.PeterPaul3 <- filter(NTL.phys.data, lakename %in% c("Paul Lake", "Peter Lake"))
+#instead of all the equal signs we can use %in% followed by a vector with all of the lake names we want
 
 # Choose a range of conditions of a numeric or integer variable
 summary(NTL.phys.data$daynum)
@@ -141,6 +146,7 @@ Selecting allows us to choose certain columns (variables) in our dataset.
 
 ```{r selecting columns}
 NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C)
+#the colon symbol selects all the columns in between the sample date and temp column
 
 ```
 ### Mutate
@@ -162,9 +168,11 @@ NTL.phys.data.PeterPaul1 <- mutate(NTL.phys.data.PeterPaul1, month = month(sampl
 
 # reorder columns to put month with the rest of the date variables
 NTL.phys.data.PeterPaul1 <- select(NTL.phys.data.PeterPaul1, lakeid:daynum, month, sampledate:comments)
+#select can also be used to reorder
 
 # find out the start and end dates of the dataset
 interval(NTL.phys.data.PeterPaul1$sampledate[1], NTL.phys.data.PeterPaul1$sampledate[21613])
+#the above is manually adding the dates and the below finds them using the first() and last() functions
 interval(first(NTL.phys.data.PeterPaul1$sampledate), last(NTL.phys.data.PeterPaul1$sampledate))
 ```
 
@@ -181,6 +189,7 @@ NTL.phys.data.processed <-
   filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>%
   select(lakename, sampledate:temperature_C) %>%
   mutate(temperature_F = (temperature_C*9/5) + 32)
+#same processed data we maid before, just more streamlined
   
 ```
 
