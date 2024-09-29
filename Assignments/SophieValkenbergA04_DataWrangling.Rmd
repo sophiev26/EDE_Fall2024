@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling (Fall 2024)"
-author: "Student Name"
+author: "Sophie Valkenberg"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -31,17 +31,43 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Wr
 
 ```{r setup, message = FALSE}
 #1a 
+#Install packages
+library(tidyverse)
+library(lubridate)
+library(here)
 
 #1b 
+getwd()
+here()
 
 #1c 
+EPAir.O3.2018 <- read.csv(
+  file=here("Data/Raw/EPAair_O3_NC2018_raw.csv"), 
+  stringsAsFactors = TRUE
+)
+EPAir.O3.2019 <- read.csv(
+  file=here("Data/Raw/EPAair_O3_NC2019_raw.csv"), 
+  stringsAsFactors = TRUE
+)
+EPAir.PM25.2018 <- read.csv(
+  file=here("Data/Raw/EPAair_PM25_NC2018_raw.csv"), 
+  stringsAsFactors = TRUE
+)
+EPAir.PM25.2019 <- read.csv(
+  file=here("Data/Raw/EPAair_PM25_NC2019_raw.csv"), 
+  stringsAsFactors = TRUE
+)
 
 #2 
-
+dim(EPAir.O3.2018)
+dim(EPAir.O3.2019)
+dim(EPAir.PM25.2018)
+dim(EPAir.PM25.2019)
 
 ```
 
 >All four datasets should have the same number of columns but unique record counts (rows). Do your datasets follow this pattern?
+Yes. All datasets have 20 columns but different numbers of rows/observations.
 
 
 ## Wrangle individual datasets to create processed files.
@@ -56,15 +82,52 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Wr
 
 ```{r questions 3 thru 4}
 #3
-
+EPAir.O3.2018$Date <- as.Date(
+  EPAir.O3.2018$Date, format = "%m/%d/%Y")
+EPAir.O3.2019$Date <- as.Date(
+  EPAir.O3.2019$Date, format = "%m/%d/%Y")
+EPAir.PM25.2018$Date <- as.Date(
+  EPAir.PM25.2018$Date, format = "%m/%d/%Y")
+EPAir.PM25.2019$Date <- as.Date(
+  EPAir.PM25.2019$Date, format = "%m/%d/%Y")
 
 #4
-
+EPAir.O3.2018Select <- select(
+  EPAir.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+  COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPAir.O3.2019Select <- select(
+  EPAir.O3.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+  COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPAir.PM25.2018Select <- select(
+  EPAir.PM25.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+  COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPAir.PM25.2019Select <- select(
+  EPAir.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+  COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #5
-
+EPAir.PM25.2018Select <- mutate(
+  EPAir.PM25.2018Select, AQS_PARAMETER_DESC = "PM2.5")
+EPAir.PM25.2019Select <- mutate(
+  EPAir.PM25.2019Select, AQS_PARAMETER_DESC = "PM2.5")
 
 #6
+write.csv(
+  EPAir.O3.2018Select, row.names = FALSE, file =
+    "./Data/Processed/EPAir.O3.2018Select_Processed"
+)
+write.csv(
+  EPAir.O3.2019Select, row.names = FALSE, file =
+    "./Data/Processed/EPAir.O3.2019Select_Processed"
+)
+write.csv(
+  EPAir.PM25.2018Select, row.names = FALSE, file =
+    "./Data/Processed/EPAir.PM25.2018Select_Processed"
+)
+write.csv(
+  EPAir.PM25.2019Select, row.names = FALSE, file =
+    "./Data/Processed/EPAir.PM25.2019Select_Processed"
+)
 
 ```
 
@@ -98,10 +161,26 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Wr
 
 ```{r questions 7 thru 11}
 #7 
-
+EPAir_combined <- rbind(
+  EPAir.O3.2018Select, 
+  EPAir.O3.2019Select, 
+  EPAir.PM25.2018Select,
+  EPAir.PM25.2019Select
+)
 
 #8 
-
+EPA_combined_processed <-
+  EPAir_combined %>%
+  filter(Site.Name == "Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue",  
+  "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", 
+  "West Johnston Co.", "Garinger High School", "Castle Hayne", 
+  "Pitt Agri. Center", "Bryson City", "Millbrook School") %>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>% 
+  summarise(meanAQI = mean(DAILY_AQI_VALUE),
+            meanLat = mean(SITE_LATITUDE),
+            meanLong = mean(SITE_LONGITUDE)
+            )
+  
 
 #9
 
