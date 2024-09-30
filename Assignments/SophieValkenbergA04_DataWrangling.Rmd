@@ -171,15 +171,20 @@ EPAir_combined <- rbind(
 #8 
 EPA_combined_processed <-
   EPAir_combined %>%
-  filter(Site.Name == "Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue",  
-  "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", 
-  "West Johnston Co.", "Garinger High School", "Castle Hayne", 
-  "Pitt Agri. Center", "Bryson City", "Millbrook School") %>%
+  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | 
+         Site.Name == "Leggett" | Site.Name == "Hattie Avenue" |  
+  Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | 
+  Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | 
+  Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | 
+  Site.Name == "Pitt Agri. Center" | Site.Name == "Bryson City" |
+  Site.Name == "Millbrook School") %>%
   group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>% 
   summarise(meanAQI = mean(DAILY_AQI_VALUE),
             meanLat = mean(SITE_LATITUDE),
             meanLong = mean(SITE_LONGITUDE)
-            )
+            ) %>% 
+  mutate(Month = month(Date)) %>% 
+  mutate(Year = year(Date))
   
 
 #9
