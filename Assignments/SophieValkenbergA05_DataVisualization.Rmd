@@ -37,6 +37,9 @@ library(lubridate)
 library(here)
 library(cowplot)
 library(ggplot2)
+library(viridis) 
+library(RColorBrewer) 
+library(colormap)
 
 getwd()
 here()
@@ -74,10 +77,11 @@ NiwotRidge_NIWO_Litter <- NiwotRidge_NIWO_Litter %>% mutate(
 
 ```{r build plot theme}
 #3
-Aphids_theme <- theme_base() + theme(
-plot.background = element_rect("white"),
+Aphids_theme <- theme(
+plot.background = element_rect("grey"),
 plot.title = element_text("violet"),
 )
+theme_set(Aphids_theme)
 
 
 ```
@@ -112,6 +116,8 @@ Tips:
 
 ```{r Create boxplots}
 #5 
+PeterPaul_Nutrients_Chemistry$month <- factor(PeterPaul_Nutrients_Chemistry$month)
+
 PeterPaul_Temp_box <-
   ggplot(PeterPaul_Nutrients_Chemistry) +
   geom_boxplot(aes(
@@ -150,6 +156,8 @@ print(PeterPaul_Cowplot)
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
 > Answer: 
+Seasons:As you would expect, the temperatures are the highest on average in the summer months compared to the other months. Additionally, total phosphorus and total nitrogen seems to be relatively steady, but slightly higher in the summer months. These totals either were not measured in the winter, or were not detectable during those months.
+Lakes: Overall, Peter lake has higher total phosphorus and total nitrogen measurements consistently. The temperatures seem to be relatively similar, although Peter lake is slightly warmer in the later quarter of the year (September-November).Peter lake tends to have more and larger outliers compared to Paul lake. 
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
@@ -158,12 +166,35 @@ Question: What do you observe about the variables of interest over seasons and b
 ```{r Plot litter}
 #6
 Niwot_NeedlesPlot <-
-  
+  NiwotRidge_NIWO_Litter %>% 
+  filter( functionalGroup == "Needles") %>% 
+  ggplot() +
+  geom_point(aes(
+    x=collectDate,
+    y=dryMass,
+    color=nlcdClass
+  ))
+print(Niwot_NeedlesPlot)
 
 #7
-
+Niwot_NeedlesPlot_Faceted <-
+  NiwotRidge_NIWO_Litter %>% 
+  filter( functionalGroup == "Needles") %>% 
+  ggplot(aes(
+    x=collectDate,
+    y=dryMass,
+    color=nlcdClass
+  )) +
+  geom_point() +
+  facet_wrap(
+    facets = vars(nlcdClass),
+    nrow=3,
+    ncol=1
+  )
+print(Niwot_NeedlesPlot_Faceted)
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
 > Answer:
+I think plot #7 is more effective because it is a lot easier to see the different dry masses over time per NLCD class. In plot #6,  the dots overlap a lot, so it is difficult to properly read the plot. If the purpose of the plot is to tell the difference in dry mass for needles in each NLCD class, plot #7 would be the most effective. 
