@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Sophie Valkenberg"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -32,8 +32,36 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 
 ```{r initialize project}
 #1 
+library(tidyverse)
+library(lubridate)
+library(here)
+library(cowplot)
+library(ggplot2)
+
+getwd()
+here()
+
+PeterPaul_Nutrients_Chemistry <- read.csv(
+  file=here(
+    "Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"), 
+  stringsAsFactors = TRUE
+)
+NiwotRidge_NIWO_Litter <- read.csv(
+  file=here(
+    "Data/Processed_KEY/NEON_NIWO_Litter_mass_trap_Processed.csv"), 
+  stringsAsFactors = TRUE
+)
 
 #2 
+class(PeterPaul_Nutrients_Chemistry$sampledate)
+class(NiwotRidge_NIWO_Litter$collectDate)
+
+PeterPaul_Nutrients_Chemistry <- PeterPaul_Nutrients_Chemistry %>% mutate(
+  sampledate = ymd(sampledate)
+  )
+NiwotRidge_NIWO_Litter <- NiwotRidge_NIWO_Litter %>% mutate(
+  collectDate = ymd(collectDate)
+)
 
 ```
 ## Define your theme
@@ -46,6 +74,11 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 
 ```{r build plot theme}
 #3
+Aphids_theme <- theme_base() + theme(
+plot.background = element_rect("white"),
+plot.title = element_text("violet"),
+)
+
 
 ```
 
@@ -56,6 +89,15 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r plot total P vs PO4}
 #4 
+PeterPaulPPoPlot <- 
+  ggplot(PeterPaul_Nutrients_Chemistry) +
+  geom_point(aes(
+    x=tp_ug,
+    y=po4,
+    color=lakename
+  )) +
+  ylim(0, 50)
+print(PeterPaulPPoPlot)
 
 ```
 
@@ -70,7 +112,39 @@ Tips:
 
 ```{r Create boxplots}
 #5 
+PeterPaul_Temp_box <-
+  ggplot(PeterPaul_Nutrients_Chemistry) +
+  geom_boxplot(aes(
+    x=month,
+    y=temperature_C,
+    color=lakename,
+  ))
+print(PeterPaul_Temp_box)
 
+PeterPaul_TP_box <-
+  ggplot(PeterPaul_Nutrients_Chemistry) +
+  geom_boxplot(aes(
+    x=month,
+    y=tp_ug,
+    color=lakename
+  )) +
+  theme(legend.position = "none")
+print(PeterPaul_TP_box)
+
+PeterPaul_TN_box <-
+  ggplot(PeterPaul_Nutrients_Chemistry) +
+  geom_boxplot(aes(
+    x=month,
+    y=tn_ug,
+    color=lakename
+  )) +
+  theme(legend.position = "none")
+print(PeterPaul_TN_box)
+
+PeterPaul_Cowplot <- plot_grid(PeterPaul_Temp_box, PeterPaul_TN_box, PeterPaul_TP_box, 
+          nrow = 3,
+          align = "v")
+print(PeterPaul_Cowplot)
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
@@ -83,7 +157,8 @@ Question: What do you observe about the variables of interest over seasons and b
 
 ```{r Plot litter}
 #6
-
+Niwot_NeedlesPlot <-
+  
 
 #7
 
