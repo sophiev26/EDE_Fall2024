@@ -7,6 +7,8 @@ geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
 ---
+\listoffigures
+
 
 ## Objectives
 1. Perform simple data visualizations in the R package `ggplot`
@@ -15,6 +17,8 @@ editor_options:
 
 ## Opening discussion
 Effective data visualization depends on purposeful choices about graph types. The ideal graph type depends on the type of data and the message the visualizer desires to communicate. The best visualizations are clear and simple. A good resource for data visualization is [Data to Viz](https://www.data-to-viz.com/), which includes both a decision tree for visualization types and explanation pages for each type of data, including links to R resources to create them. Take a few minutes to explore this website.
+
+\newpage
 
 ## Set Up
 
@@ -76,7 +80,7 @@ Here are some commonly used aesthetic types that can be manipulated in ggplot:
 
 ### Plotting continuous variables over time: Scatterplot and Line Plot
 
-```{r, fig.height = 3, fig.width = 4, warning = FALSE}
+```{r, fig.height = 3, fig.width = 4, warning = FALSE, fig.cap="Scatter Plot"}
 # Scatterplot
 ggplot(EPAair, aes(x = Date, y = Ozone)) + 
   geom_point() #plots it as a point, not connected
