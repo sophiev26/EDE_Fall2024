@@ -27,10 +27,33 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r setup2}
 #1
+library(tidyverse)
+library(lubridate)
+library(here)
+library(cowplot)
+library(ggplot2)
+library(agricolae)
+library(corrplot)
 
+getwd()
+here()
+
+LTER_Lake_ChemPhys <- read.csv(
+  file=here(
+    "Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv"), 
+  stringsAsFactors = TRUE
+)
+
+LTER_Lake_ChemPhys$sampledate <- as.Date(
+  LTER_Lake_ChemPhys$sampledate, format = "%m/%d/%y")
 
 #2
+mytheme <- theme(
+  axis.text = element_text(color = "black"), 
+        legend.position = "top",
+        plot.background = element_rect("#9073ab"))
 
+theme_set(mytheme)
 
 ```
 
@@ -38,9 +61,9 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 Our first research question is: Does mean lake temperature recorded during July change with depth across all lakes?
 
 3. State the null and alternative hypotheses for this question:
-> Answer:
-H0: 
-Ha: 
+> Answer: 
+H0: mean lake temperature recording during July changes with depth across all lakes
+Ha: mean lake temperature recording during July does not change with depth across all lakes
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -52,24 +75,46 @@ Ha:
 
 ```{r scatterplot}
 #4
+LTER_Lake_ChemPhys_Wrangled_SReg <- 
+  LTER_Lake_ChemPhys %>% 
+  mutate(Month = month(sampledate)) %>%
+  filter(Month == 07) %>% 
+  select(lakename,year4,daynum,depth,temperature_C) %>% 
+  na.omit()
 
 
 #5
+LTER_SReg_ScatterPlot <-
+  ggplot(LTER_Lake_ChemPhys_Wrangled_SReg, aes(x=temperature_C,
+                      y=depth))+
+  geom_point()+
+  geom_smooth(method=lm, col="blue")+
+  xlim(0, 35) +
+  
 
+print(LTER_SReg_ScatterPlot)
 
 ```
 
 
-6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
+6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest anything about the linearity of this trend?
 
 > Answer: 
-
+According to the figure, the temperatures seem to be linearly and inversly associated with depth, as shown by the regression line. As the depth increases, the temperature decreases. It would interesting to see if these correlations are statistically signficiant.
 
 7. Perform a linear regression to test the relationship and display the results.
 
 ```{r linear.regression}
 #7
+depth_temp_regression <- lm(
+  data = LTER_Lake_ChemPhys_Wrangled_SReg,
+  temperature_C ~ depth)
 
+summary(depth_temp_regression)
+
+cor.test(
+  LTER_Lake_ChemPhys_Wrangled_SReg$temperature_C,
+  LTER_Lake_ChemPhys_Wrangled_SReg$depth)
 
 ```
 
@@ -77,7 +122,7 @@ Ha:
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
 > Answer:
-
+The P-value is smaller than 0.05, which indicates that this relationship is statistically significant. According to R-squared value, 73.87% of the variability in temperature is explained by the changes in depth, also pointing to the significance of this correlation. Additionally, every 1 meter increase in depth is predicted to change by 1.95ºC , as indicated by the slope coefficient for depth. There are 9726 degrees of freedom for these results. 
 
 ---
 
