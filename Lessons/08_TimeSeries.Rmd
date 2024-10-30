@@ -21,9 +21,9 @@ Today we will work with two datasets. The USGS dataset on discharge at the Eno R
 
 library(tidyverse)
 library(lubridate)
-#install.packages("trend")
+#install.packages("trend") -> run stationary tests
 library(trend)
-#install.packages("zoo")
+#install.packages("zoo") -> replace missing observations in time series
 library(zoo)
 #install.packages("Kendall")
 library(Kendall)
@@ -77,9 +77,12 @@ River discharge is measured daily at the Eno River gage station. Since we are wo
 Let's look at what the dataset contains for mean daily discharge.
 
 ```{r}
+#First thing to do in t ime series analysis: plot your value over time to look at it visually
 ggplot(EnoDischarge, aes(x = datetime, y = discharge.mean)) +
   geom_line() +
   labs(x = "", y = expression("Discharge (ft"^3*"/s)"))
+
+#large gap -> this is an issue
 ```
 
 Notice there are missing data from 1971 to 1985. Gaps this large are generally an issue for time series analysis, as we don't have a continuous record of data or a good way to characterize any variability that happened over those years. We will illustrate a few workarounds to address these issues. 
@@ -116,6 +119,10 @@ Note: time series objects must be equispaced. In our case, we have daily data wi
 
 ```{r}
 EnoDischarge.late_ts <- ts(EnoDischarge.late$discharge.mean, start = c(1985,1), frequency = 365)
+
+#c(year, month)
+
+#stl() only accepts time series functions
 ```
 
 The `stl` function decomposes the time series object into its component parts. We must specify that the window for seasonal extraction is either "periodic" or a specific number of at least 7. The decomposition proceeds through a loess (locally estimated scatterplot smoothing) function.
@@ -124,6 +131,7 @@ The `stl` function decomposes the time series object into its component parts. W
 ?stl
 # Generate the decomposition
 EnoDischarge.late_Decomposed <- stl(EnoDischarge.late_ts, s.window = "periodic")
+#first variable is univariate time series to be composed. s.window is seasonal window (periodic or you could use the legs (ex. s.window = 12)) 
 
 # Visualize the decomposed series. 
 plot(EnoDischarge.late_Decomposed)
@@ -134,6 +142,7 @@ EnoDischarge.late_Components <- as.data.frame(EnoDischarge.late_Decomposed$time.
 EnoDischarge.late_Components <- mutate(EnoDischarge.late_Components,
         Observed = EnoDischarge.late$discharge.mean,     
         Date = EnoDischarge.late$datetime)
+#adding means and date from original data frame to the components data frame
 
 # Visualize how the trend maps onto the data
 ggplot(EnoDischarge.late_Components) +
@@ -184,15 +193,17 @@ summary(wind_data$AWND)
 # In real applications you will simply replace NAs
 wind_data_clean <- 
   wind_data %>% 
-  mutate( AWND.clean = zoo::na.approx(AWND) )
+  mutate( AWND.clean = zoo::na.approx(AWND))
+#New column uses na.approx() to interpolate missing interpolations using either linear interpolation or Spline interpolation
 
 summary(wind_data_clean$AWND.clean)
-#Note the NA is gone
+#Note the NA is gone -> did not change mean, median, min, or max
 
 ggplot(wind_data_clean ) +
   geom_line(aes(x = DATE, y = AWND.clean), color = "red") +
   geom_line(aes(x = DATE, y = AWND), color = "black") +
   ylab("Average Wind Speed") 
+#for time series, you can't just remove NAs, you need to interpolate missing information
 ```
 
 ### Monotonic trend analysis, continued
@@ -235,12 +246,14 @@ wind_data_trend1 <- Kendall::SeasonalMannKendall(wind_data_ts)
 # Inspect results
 wind_data_trend1
 summary(wind_data_trend1)
+#p-value for less than 0.05, reject null hypothesis (that the data is stationary) -> we do have a trend
 
 
 wind_data_trend2 <- trend::smk.test(wind_data_ts)
 # Inspect results
 wind_data_trend2
 summary(wind_data_trend2)
+#the value of S shows that some seaons have a stronger tendancy of decrease (higher negative value)
 
 #Visualization
 wind_data_plot <-
