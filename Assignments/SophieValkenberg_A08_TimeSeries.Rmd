@@ -1,6 +1,6 @@
 ---
 title: "Assignment 8: Time Series Analysis"
-author: "Student Name"
+author: "Sophie Valkenberg"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -27,6 +27,22 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 * Set your ggplot theme
 
 ```{r}
+library(tidyverse)
+library(lubridate)
+library(trend)
+library(zoo)
+library(Kendall)
+library(tseries)
+library(here)
+here
+getwd()
+
+mytheme <- theme(
+  axis.text = element_text(color = "black"), 
+        legend.position = "top",
+        plot.background = element_rect("#9073ab"))
+
+theme_set(mytheme)
 
 ```
 
@@ -35,6 +51,41 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r, message = FALSE}
 #1
+Ozone_2010 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2011 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2012 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2013 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2014 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2015 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2016 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2017 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2018 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv"), 
+         stringsAsFactors = TRUE)
+Ozone_2019 <- read.csv(
+  file=here("Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv"), 
+         stringsAsFactors = TRUE)
+
+GaringerOzone <- rbind(Ozone_2010, Ozone_2011, Ozone_2012,
+                                          Ozone_2013, Ozone_2014, Ozone_2015,
+                                          Ozone_2016, Ozone_2017, Ozone_2018,
+                                          Ozone_2019)
 
 ```
 
@@ -50,13 +101,20 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r}
 # 3
+GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%m/%d/%Y")
 
 # 4
+GaringerOzone_Wrang <-
+  GaringerOzone %>% 
+  select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 
 # 5
+Days <- as.data.frame(seq(from = as.Date("2010-01-01"), 
+                          to = as.Date("2019-12-31"), by = "day"))
+names(Days) <- ("Date")
 
 # 6
-
+GaringerOzone <- left_join(Days, GaringerOzone_Wrang, by = "Date")
 
 ```
 
@@ -66,10 +124,17 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r}
 #7
+GaringerPlotLine <- ggplot(GaringerOzone, aes(
+  x = Date, y = Daily.Max.8.hour.Ozone.Concentration)) +
+  geom_line() +
+  geom_smooth(method = "lm", col="red")
+
+print(GaringerPlotLine)
 
 ```
 
 >Answer:
+There is definitely a seasonal trend, as shown by the up-and-down pattern of the line plot. Additionally, there seems to be a very slight downward trend over time, shown by the linear trend line.
 
 ## Time Series Analysis
 
@@ -79,10 +144,14 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 
 ```{r}
 #8
+GaringerOzone_Interpolation <- 
+  GaringerOzone %>% 
+  mutate(Conc.Clean = na.approx(Daily.Max.8.hour.Ozone.Concentration))
 
 ```
 
 > Answer: 
+We used a linear interpolation instead of a piecewise constant since this data is seasonal, meaning that it changes as compared to the nearest neighbor. Additinoally, we did not use a spline interpolation because that method uses a quadratic function, but our data appeared to change linearly over time, so we wanted to use a linear function.
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
