@@ -1,0 +1,4 @@
+"0","kable(summary_Ozone,"
+"0","      col.names = c(""County"", expression(""$\\mu g/m^3$"")),"
+"0","      digits = 2,"
+"0","      label = ""Mean Ozone"")"

@@ -1,0 +1,3 @@
+"0","#useful function data.frame()"
+"0","create_df <- data.frame(""speed""=car_speed,""dist""=car_dist)"
+"0","create_df"

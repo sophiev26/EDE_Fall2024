@@ -1,0 +1,8 @@
+"0","numericInput("
+"0","  inputId = ""n"","
+"0","  label = ""How many cars?"", "
+"0","  value =  7"
+"0","  )"
+"2","Error in numericInput(inputId = ""n"", label = ""How many cars?"", value = 7) : 
+  could not find function ""numericInput""
+"

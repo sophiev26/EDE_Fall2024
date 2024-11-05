@@ -1,0 +1,12 @@
+"0","#Denies the object, whatever was true will become false and vice versa
+!vector3
+"
+"1","[1]"
+"1"," FALSE"
+"1"," FALSE"
+"1"," FALSE"
+"1","  TRUE"
+"1"," FALSE"
+"1","  TRUE"
+"1","
+"

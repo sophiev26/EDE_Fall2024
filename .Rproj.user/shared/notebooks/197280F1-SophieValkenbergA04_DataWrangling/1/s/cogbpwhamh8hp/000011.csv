@@ -1,0 +1,6 @@
+"0","#3
+EPAir.O3.2018$Date -> as.Date(EPAir.O3.2018$Date, format = ""%m/%d%Y"")
+"
+"2","Error in as.Date(EPAir.O3.2018$Date, format = ""%m/%d%Y"") <- EPAir.O3.2018$Date : 
+  could not find function ""as.Date<-""
+"

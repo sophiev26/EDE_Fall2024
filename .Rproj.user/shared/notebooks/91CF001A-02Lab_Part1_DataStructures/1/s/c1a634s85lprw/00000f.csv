@@ -1,0 +1,11 @@
+"0","#Compute the difference between each temperature and the average calculated above
+temps_F - mean_of_temps
+"
+"1","[1]"
+"1","  1.8"
+"1","  3.8"
+"1","  1.8"
+"1"," -3.2"
+"1"," -4.2"
+"1","
+"
